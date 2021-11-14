@@ -5,10 +5,12 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 public class player : MonoBehaviour
 {
+    public camera cam;
 
     public double gameTick = 2;
     private double lastGameTick;
     private static int height = 8;
+    public Transform floor;
 
     public Block[,,] gameBoard = new Block[5,height,5];
 
@@ -36,7 +38,9 @@ public class player : MonoBehaviour
 
         showFinalLocation();
 
+        doSpecialCommands();
 
+        checkForFullMatrix();
     }
     void advanceGame()
     {
@@ -53,19 +57,19 @@ public class player : MonoBehaviour
     {
         if (Input.GetButtonDown("Up"))
         {
-            tryMoveActive(new Vector3(0, 0, 1));
+            tryMoveActive(cam.up);
         }
         if (Input.GetButtonDown("Down"))
         {
-            tryMoveActive(new Vector3(0, 0, -1));
+            tryMoveActive(cam.down);
         }
         if (Input.GetButtonDown("Left"))
         {
-            tryMoveActive(new Vector3(-1, 0, 0));
+            tryMoveActive(cam.left);
         }
         if (Input.GetButtonDown("Right"))
         {
-            tryMoveActive(new Vector3(1, 0, 0));
+            tryMoveActive(cam.right);
         }
     }
 
@@ -73,27 +77,27 @@ public class player : MonoBehaviour
     {
         if (Input.GetButtonDown("RotateAway"))
         {
-            tryRotate("x", false);
+            tryRotate(cam.pitch, cam.pitchpol);
         }
         if (Input.GetButtonDown("RotateTowards"))
         {
-            tryRotate("x", true);
+            tryRotate(cam.pitch, !cam.pitchpol);
         }
         if (Input.GetButtonDown("RotateLeft"))
         {
-            tryRotate("y", false);
+            tryRotate(cam.yaw, cam.yawpol);
         }
         if (Input.GetButtonDown("RotateRight"))
         {
-            tryRotate("y", true);
+            tryRotate(cam.yaw, !cam.yawpol);
         }
         if (Input.GetButtonDown("RotateCounterclockwise"))
         {
-            tryRotate("z", false);
+            tryRotate(cam.roll, cam.rollpol);
         }
         if (Input.GetButtonDown("RotateClockwise"))
         {
-            tryRotate("z", true);
+            tryRotate(cam.roll, !cam.rollpol);
         }
     }
 
@@ -118,7 +122,7 @@ public class player : MonoBehaviour
         {
             final[i] = blocks[i].copy();
 
-            final[i].block.GetComponent<MeshRenderer>().material.color = new Color(c.r, c.g, c.b, .6f);
+            final[i].block.GetComponent<MeshRenderer>().material.color = new Color(c.r, c.g, c.b, .5f);
         }
 
         while (tryMoveActive(new Vector3(0, -1, 0))) { }
@@ -144,8 +148,21 @@ public class player : MonoBehaviour
 
     }
 
+    void doSpecialCommands()
+    {
+        if(Input.GetButtonDown("HardDrop"))
+        {
+            print("down");
+            while (tryMoveActive(Vector3.down)) { }
+            setAllInactive();
+            createNewPiece();
+        }
+    }
 
-
+    void checkForFullMatrix()
+    {
+        print("checking");
+    }
     Block findPivot()
     {
         for (int x = 0; x < 5; x++)
@@ -321,53 +338,53 @@ public class player : MonoBehaviour
 
     void createNewPiece()
     {
-        int tet = Random.Range(0, 5);
+        int tet = Random.Range(0, 6);
 
         switch(tet){
             case 0:
                 //green
-                gameBoard[2, height - 2,2] = new Block(new Vector3(2, height - 2,2), green, false);
-                gameBoard[3, height - 2,2] = new Block(new Vector3(3, height - 2,2), green, true);
-                gameBoard[3, height - 2,3] = new Block(new Vector3(3, height - 2,3), green, false);
-                gameBoard[3, height - 1,2] = new Block(new Vector3(3, height - 1,2), green, false);
+                gameBoard[2, height - 2,2] = new Block(new Vector3(2, height - 2,2), green, false, floor);
+                gameBoard[3, height - 2,2] = new Block(new Vector3(3, height - 2,2), green, true, floor);
+                gameBoard[3, height - 2,3] = new Block(new Vector3(3, height - 2,3), green, false, floor);
+                gameBoard[3, height - 1,2] = new Block(new Vector3(3, height - 1,2), green, false, floor);
                 break;
             case 1:
                 //red
-                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1, 2), red, true);
-                gameBoard[3, height - 1, 3] = new Block(new Vector3(3, height - 1,3), red, false);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), red, false);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), red, false);
+                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1, 2), red, true, floor);
+                gameBoard[3, height - 1, 3] = new Block(new Vector3(3, height - 1,3), red, false, floor);
+                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), red, false, floor);
+                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), red, false, floor);
                 break;
             case 2:
                 //cyan
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), cyan, false);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), cyan, true);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), cyan, false);
-                gameBoard[2, height - 1, 0] = new Block(new Vector3(2, height - 1,0), cyan, false);
-                print(2);
+                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), cyan, false, floor);
+                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), cyan, true, floor);
+                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), cyan, false, floor);
+                gameBoard[2, height - 1, 0] = new Block(new Vector3(2, height - 1,0), cyan, false, floor);
+                //print(2);
                 break;
             case 3:
                 //orange
-                gameBoard[1, height - 1, 1] = new Block(new Vector3(1, height - 1,1), orange, false);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), orange, false);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), orange, true);
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), orange, false);
-                print(3);
+                gameBoard[1, height - 1, 1] = new Block(new Vector3(1, height - 1,1), orange, false, floor);
+                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), orange, false, floor);
+                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), orange, true, floor);
+                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), orange, false, floor);
+                //print(3);
                 break;
             case 4:
                 //purple
-                gameBoard[1, height - 1,2] = new Block(new Vector3(1, height - 1,2), purple, false);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), purple, false);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), purple, true);
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), purple, false);
-                print(4);
+                gameBoard[1, height - 1,2] = new Block(new Vector3(1, height - 1,2), purple, false, floor);
+                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), purple, false, floor);
+                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), purple, true, floor);
+                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), purple, false, floor);
+                //print(4);
                 break;
             case 5:
                 //yellow
-                gameBoard[3, height - 1, 1] = new Block(new Vector3(3, height - 1,1), yellow, false);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), yellow, false);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), yellow, true);
-                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1,2), yellow, false);
+                gameBoard[3, height - 1, 1] = new Block(new Vector3(3, height - 1,1), yellow, false, floor);
+                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), yellow, false, floor);
+                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), yellow, true, floor);
+                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1,2), yellow, false, floor);
                 break;
 
         }   
