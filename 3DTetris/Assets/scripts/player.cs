@@ -12,11 +12,13 @@ public class player : MonoBehaviour
 
     public Block[,,] gameBoard = new Block[5,height,5];
 
+    private Block[] final;
     // Start is called before the first frame update
     void Start()
     {
         lastGameTick = Time.time;
         createNewPiece();
+
     }
 
     // Update is called once per frame
@@ -26,19 +28,21 @@ public class player : MonoBehaviour
         {
             lastGameTick = Time.time;
             advanceGame();
+
         }
 
         doTranslationalMovement();
         doRotationalMovement();
 
+        showFinalLocation();
 
-        
+
     }
     void advanceGame()
     {
         if(!tryMoveActive(new Vector3(0, -1, 0)))
         {
-            print("found a collision");
+            //print("found a collision");
             setAllInactive();
             createNewPiece();
             return;
@@ -94,7 +98,51 @@ public class player : MonoBehaviour
     }
 
 
+    void showFinalLocation()
+    {
+        Block[] blocks = findActiveBlocks();
+        
 
+        //print("done");
+        if(!(final is null))
+        {
+            foreach(Block b in final)
+            {
+                Destroy(b.block);
+            }
+        }
+        final = new Block[4];
+        Color c = blocks[0].block.GetComponent<MeshRenderer>().material.color;
+
+        for (int i =0; i < 4; i++)
+        {
+            final[i] = blocks[i].copy();
+
+            final[i].block.GetComponent<MeshRenderer>().material.color = new Color(c.r, c.g, c.b, .6f);
+        }
+
+        while (tryMoveActive(new Vector3(0, -1, 0))) { }
+
+
+        //extra loop here so null writes always get overridden by future to prevent bug
+        for(int i = 0; i < 4; i++)
+        {
+            Vector3 endLocation = blocks[i].block.transform.position;
+            gameBoard[(int)endLocation.x, (int)endLocation.y, (int)endLocation.z] = null;
+        }
+        for(int i = 0; i < 4; i++)
+        {
+            Vector3 endLocation = blocks[i].block.transform.position;
+            Vector3 fPos = final[i].block.transform.position;
+            blocks[i].block.transform.position = fPos;
+            
+
+            gameBoard[(int)fPos.x, (int)fPos.y, (int)fPos.z] = blocks[i];
+
+            final[i].block.transform.position = endLocation;
+        }
+
+    }
 
 
 
@@ -229,10 +277,7 @@ public class player : MonoBehaviour
     bool attemptAssignment(Block[] blocks, Vector3[] newPositions)
     {
         //check to see if we'll end up outside of the play area or inside another piece
-        foreach(Vector3 v in newPositions)
-        {
-            print(v);
-        }
+
         for (int i = 0; i < blocks.Length; i++)
         {
             Vector3 pos = newPositions[i];

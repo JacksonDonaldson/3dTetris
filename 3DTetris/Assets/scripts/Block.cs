@@ -18,5 +18,9 @@ public class Block
         isActive = true;
     }
 
+    public Block copy()
+    {
+        return new Block(block.transform.position, block.GetComponent<Renderer>().material, isPivot);
+    }
 
 }
