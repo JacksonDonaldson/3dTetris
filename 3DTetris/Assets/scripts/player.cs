@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-
+using Random = UnityEngine.Random;
 public class player : MonoBehaviour
 {
 
@@ -25,9 +26,48 @@ public class player : MonoBehaviour
         {
             lastGameTick = Time.time;
             advanceGame();
-
         }
+
+        doTranslationalMovement();
+        doRotationalMovement();
+
+
         
+    }
+    void advanceGame()
+    {
+        if(!tryMoveActive(new Vector3(0, -1, 0)))
+        {
+            print("found a collision");
+            setAllInactive();
+            createNewPiece();
+            return;
+        }
+    }
+
+    void doTranslationalMovement()
+    {
+        if (Input.GetButtonDown("Up"))
+        {
+            tryMoveActive(new Vector3(0, 0, 1));
+        }
+        if (Input.GetButtonDown("Down"))
+        {
+            tryMoveActive(new Vector3(0, 0, -1));
+        }
+        if (Input.GetButtonDown("Left"))
+        {
+            tryMoveActive(new Vector3(-1, 0, 0));
+        }
+        if (Input.GetButtonDown("Right"))
+        {
+            tryMoveActive(new Vector3(1, 0, 0));
+        }
+    }
+
+    void doRotationalMovement()
+    {
+
     }
 
     public Material green, red, cyan, orange, purple, yellow;
@@ -85,24 +125,7 @@ public class player : MonoBehaviour
 
         }   
     }
-    void moveActiveBlocksDown()
-    {
-        for(int x = 0; x < 5; x++)
-        {
-            for(int y = 0; y < height; y++)
-            {
-                for(int z = 0; z < 5; z++)
-                {
-                    if(!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
-                    {
-                        gameBoard[x, y - 1, z] = gameBoard[x, y, z];
-                        gameBoard[x, y, z] = null;
-                        gameBoard[x, y - 1, z].block.transform.position = new Vector3(x, y - 1, z);
-                    }
-                }
-            }
-        }
-    }
+
     void setAllInactive()
     {
         for (int x = 0; x < 5; x++)
@@ -119,24 +142,24 @@ public class player : MonoBehaviour
             }
         }
     }
-    void advanceGame()
+    bool tryMoveActive(Vector3 dir)
     {
         print("moving");
+        
         for(int x = 0; x < 5; x++)
         {
             for(int y = 0; y < height; y++)
             {
                 for(int z = 0; z < 5; z++)
                 {
+                    int nux = x + (int)dir.x;
+                    int nuy = y + (int)dir.y;
+                    int nuz = z + (int)dir.z;
                     if(!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
                     {
-                        if (y == 0 || (!(gameBoard[x,y-1,z] is null) && !(gameBoard[x,y-1,z].isActive)))
+                        if (nuy < 0 || nuy >= height || nux < 0 || nux >=5 || nuz < 0 || nuz>=5 || (!(gameBoard[nux,nuy,nuz] is null) && !(gameBoard[nux,nuy,nuz].isActive)))
                         {
-                            print("found a collision");
-                            print(y);
-                            setAllInactive();
-                            createNewPiece();
-                            return;
+                            return false;
                             
                         }
                     }
@@ -145,6 +168,49 @@ public class player : MonoBehaviour
         }
 
         //if we don't find a piece that cant' fall, then everything can move down
-        moveActiveBlocksDown();
+        doMoveActive(dir);
+        return true;
+    }
+
+    void doMoveActive(Vector3 dir)
+    {
+        Block[,,] copyBoard = new Block[5, height, 5];
+
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < 5; z++)
+                {
+
+                    int nux = x + (int)dir.x;
+                    int nuy = y + (int)dir.y;
+                    int nuz = z + (int)dir.z;
+
+                    if (!(gameBoard[x, y, z] is null) && gameBoard[x, y, z].isActive)
+                    {
+
+                        copyBoard[nux, nuy, nuz] = gameBoard[x, y, z];
+                        
+                        gameBoard[x, y, z].block.transform.position = new Vector3(nux, nuy, nuz);
+                        gameBoard[x, y, z] = null;
+                    }
+                }
+            }
+        }
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < 5; z++)
+                {
+                    if(!(copyBoard[x, y, z] is null)){
+                        gameBoard[x, y, z] = copyBoard[x, y, z];
+                        print("unnull");
+                        print(y);
+                    }
+                }
+            }
+        }
     }
 }
