@@ -69,3 +69,99 @@ InputManager:
     type: 0
     axis: 1
     joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateAway
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: i
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateTowards
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: k
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateLeft
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: j
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateRight
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: l
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateCounterclockwise
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: u
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: RotateClockwise
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: o
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 999
+    dead: 0.001
+    sensitivity: 999
+    snap: 1
+    invert: 0
+    type: 0
+    axis: 1
+    joyNum: 0

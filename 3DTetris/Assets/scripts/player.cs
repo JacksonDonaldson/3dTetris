@@ -67,9 +67,211 @@ public class player : MonoBehaviour
 
     void doRotationalMovement()
     {
+        if (Input.GetButtonDown("RotateAway"))
+        {
+            tryRotate("x", false);
+        }
+        if (Input.GetButtonDown("RotateTowards"))
+        {
+            tryRotate("x", true);
+        }
+        if (Input.GetButtonDown("RotateLeft"))
+        {
+            tryRotate("y", false);
+        }
+        if (Input.GetButtonDown("RotateRight"))
+        {
+            tryRotate("y", true);
+        }
+        if (Input.GetButtonDown("RotateCounterclockwise"))
+        {
+            tryRotate("z", false);
+        }
+        if (Input.GetButtonDown("RotateClockwise"))
+        {
+            tryRotate("z", true);
+        }
+    }
+
+
+
+
+
+
+    Block findPivot()
+    {
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < 5; z++)
+                {
+                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isPivot && gameBoard[x, y, z].isActive)
+                    {
+                        return gameBoard[x, y, z];
+                    }
+                }
+            }
+        }
+        print("VERY BAD NO PIVOT");
+        return null;
+    }
+    Block[] findActiveBlocks()
+    {
+        Block[] blocks = new Block[4];
+        int i = 0;
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < 5; z++)
+                {
+                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
+                    {
+                        blocks[i] = gameBoard[x, y, z];
+                        i++;
+                    }
+                }
+            }
+        }
+        return blocks;
+    }
+
+
+            
+    bool tryRotate(String axis, bool clockwise)
+    {
+        Block pivot = findPivot();
+        Block[] blocks = findActiveBlocks();
+        Vector2[] difs = new Vector2[blocks.Length];
+        Vector3[] newPositions = new Vector3[blocks.Length];
+        //find all the blocks that aren't in line with the pivot on axis
+        //then rotate them around the pivot 
+        //clockwise = (-y,x) anti = (y,-x)
+        float px = pivot.block.transform.position.x;
+        float py = pivot.block.transform.position.y;
+        float pz = pivot.block.transform.position.z;
+        if(axis == "x")
+        {
+            for(int i = 0; i < blocks.Length; i++)
+            {
+                difs[i] = new Vector2(blocks[i].block.transform.position.y - py, blocks[i].block.transform.position.z - pz);
+                //print(difs[i]);
+            }
+            
+            if (clockwise)
+            {
+                for(int i =0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py + difs[i].y, pz-difs[i].x);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py-difs[i].y, pz + difs[i].x);
+                }
+            }
+            return attemptAssignment(blocks, newPositions);
+        }
+
+        if (axis == "y")
+        {
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                difs[i] = new Vector2(blocks[i].block.transform.position.x - px, blocks[i].block.transform.position.z - pz);
+            }
+            if (clockwise)
+            {
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(px + difs[i].y, blocks[i].block.transform.position.y, pz - difs[i].x);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(px - difs[i].y, blocks[i].block.transform.position.y, pz + difs[i].x);
+                }
+            }
+            return attemptAssignment(blocks, newPositions);
+        }
+
+        if (axis == "z")
+        {
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                difs[i] = new Vector2(blocks[i].block.transform.position.x - px, blocks[i].block.transform.position.y - py);
+            }
+            if (clockwise)
+            {
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(px + difs[i].y, py -difs[i].x, blocks[i].block.transform.position.z);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < blocks.Length; i++)
+                {
+                    newPositions[i] = new Vector3(px - difs[i].y, py + difs[i].x, blocks[i].block.transform.position.z);
+                }
+            }
+            return attemptAssignment(blocks, newPositions);
+        }
+
+        return false;
 
     }
 
+    bool attemptAssignment(Block[] blocks, Vector3[] newPositions)
+    {
+        //check to see if we'll end up outside of the play area or inside another piece
+        foreach(Vector3 v in newPositions)
+        {
+            print(v);
+        }
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            Vector3 pos = newPositions[i];
+            if(pos.x < 0 || pos.x >=5 || pos.y >= height || pos.y <0 || pos.z >= 5 || pos.z < 0)
+            {
+                return false;
+            }
+            if(!(gameBoard[(int)pos.x,(int)pos.y,(int)pos.z] is null) && !gameBoard[(int)pos.x, (int)pos.y, (int)pos.z].isActive)
+            {
+                return false;
+            }
+        }
+
+        //we won't, so continue with assignment
+        //starting by removing all old blocks
+        for(int x=0; x < 5; x++)
+        {
+            for(int y = 0; y < height; y++)
+            {
+                for(int z = 0; z < 5; z++)
+                {
+                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
+                    {
+                        gameBoard[x, y, z] = null;
+                    }
+                }
+            }
+        }
+
+        //continuing by assigning newPosition to each block
+        for(int i = 0; i < blocks.Length; i++)
+        {
+            Vector3 pos = newPositions[i];
+            gameBoard[(int)pos.x, (int)pos.y, (int)pos.z] = blocks[i];
+            blocks[i].block.transform.position = pos;
+
+        }
+        return true;
+    }
     public Material green, red, cyan, orange, purple, yellow;
 
     void createNewPiece()
@@ -144,7 +346,7 @@ public class player : MonoBehaviour
     }
     bool tryMoveActive(Vector3 dir)
     {
-        print("moving");
+        //print("moving");
         
         for(int x = 0; x < 5; x++)
         {
@@ -206,8 +408,8 @@ public class player : MonoBehaviour
                 {
                     if(!(copyBoard[x, y, z] is null)){
                         gameBoard[x, y, z] = copyBoard[x, y, z];
-                        print("unnull");
-                        print(y);
+                        //print("unnull");
+                        //print(y);
                     }
                 }
             }
