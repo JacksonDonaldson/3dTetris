@@ -162,6 +162,15 @@ public class player : MonoBehaviour
 
             checkForFullMatrix();
         }
+
+        if (Input.GetButton("SoftDrop"))
+        {
+            gameTick = .5;
+        }
+        else
+        {
+            gameTick = 2;
+        }
     }
 
 
