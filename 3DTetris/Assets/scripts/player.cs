@@ -40,7 +40,7 @@ public class player : MonoBehaviour
 
         doSpecialCommands();
 
-        checkForFullMatrix();
+        
     }
     void advanceGame()
     {
@@ -48,6 +48,9 @@ public class player : MonoBehaviour
         {
             //print("found a collision");
             setAllInactive();
+
+            checkForFullMatrix();
+
             createNewPiece();
             return;
         }
@@ -152,16 +155,100 @@ public class player : MonoBehaviour
     {
         if(Input.GetButtonDown("HardDrop"))
         {
-            print("down");
+            //print("down");
             while (tryMoveActive(Vector3.down)) { }
             setAllInactive();
             createNewPiece();
+
+            checkForFullMatrix();
         }
     }
 
+
     void checkForFullMatrix()
     {
-        print("checking");
+        for (int y = 0; y < height; y++)
+        {
+            bool good = true;
+
+            for(int x = 0; x < 5; x++)
+            {
+                for(int z = 0; z < 5; z++)
+                {
+                    if(gameBoard[x,y,z] is null)
+                    {
+
+                        good = false;
+                        break;
+                    }
+                }
+                if (!good)
+                {
+                    break;
+                }
+            }
+
+            if (good)
+            {
+                // a matrix is full
+                //destroy it
+                for(int x = 0; x < 5; x++)
+                {
+                    for(int z = 0; z<5; z++)
+                    {
+                        Destroy(gameBoard[x, y, z].block);
+                    }
+                }
+                
+                //move it all down
+                for (int ny = y; ny < height - 1; ny++)
+                {
+                    for (int x = 0; x < 5; x++)
+                    {
+                        for (int z = 0; z < 5; z++)
+                        {
+                            
+                            gameBoard[x, ny, z] = gameBoard[x, ny + 1, z];
+                            gameBoard[x, ny + 1, z] = null;
+
+                            if (!(gameBoard[x, ny, z] is null))
+                            {
+                                //print("found 1");
+                                print(gameBoard[x, ny, z].isActive);
+                                gameBoard[x, ny, z].block.transform.position = new Vector3(x, ny, z);
+                                
+                            }
+
+                            
+
+                        }
+                    }
+                }
+                y--;
+
+                for(int ny = 0; ny < height; ny++)
+                {
+                    for(int x = 0; x < 5; x++)
+                    {
+                        for (int z = 0; z < 5; z++)
+                        {
+                            if(!(gameBoard[x,ny,z] is null))
+                            {
+                                print(x);
+                                print(ny);
+                                print(z);
+                            }
+                        }
+                        //print("");
+                    }
+                    //print("");
+                    //print("");
+                    //print("");
+                }
+
+            }
+
+        }
     }
     Block findPivot()
     {

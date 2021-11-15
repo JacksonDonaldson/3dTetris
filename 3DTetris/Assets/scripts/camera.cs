@@ -27,7 +27,7 @@ public class camera : MonoBehaviour
     void Update()
     {
 
-        print(direction);
+        //print(direction);
 
         Vector3 axis= Vector3.zero;
         switch (direction){
