@@ -9,7 +9,7 @@ public class player : MonoBehaviour
 
     public double gameTick = 2;
     private double lastGameTick;
-    private static int height = 8;
+    public static int height = 11;
     public Transform floor;
 
     public Block[,,] gameBoard = new Block[5,height,5];
@@ -439,48 +439,48 @@ public class player : MonoBehaviour
         switch(tet){
             case 0:
                 //green
-                gameBoard[2, height - 2,2] = new Block(new Vector3(2, height - 2,2), green, false, floor);
-                gameBoard[3, height - 2,2] = new Block(new Vector3(3, height - 2,2), green, true, floor);
-                gameBoard[3, height - 2,3] = new Block(new Vector3(3, height - 2,3), green, false, floor);
-                gameBoard[3, height - 1,2] = new Block(new Vector3(3, height - 1,2), green, false, floor);
+                gameBoard[2, height - 4,2] = new Block(new Vector3(2, height - 4,2), green, false, floor);
+                gameBoard[3, height - 4,2] = new Block(new Vector3(3, height - 4,2), green, true, floor);
+                gameBoard[3, height - 4,3] = new Block(new Vector3(3, height - 4,3), green, false, floor);
+                gameBoard[3, height - 3,2] = new Block(new Vector3(3, height - 3,2), green, false, floor);
                 break;
             case 1:
                 //red
-                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1, 2), red, true, floor);
-                gameBoard[3, height - 1, 3] = new Block(new Vector3(3, height - 1,3), red, false, floor);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), red, false, floor);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), red, false, floor);
+                gameBoard[3, height - 3, 2] = new Block(new Vector3(3, height - 3, 2), red, true, floor);
+                gameBoard[3, height - 3, 3] = new Block(new Vector3(3, height - 3,3), red, false, floor);
+                gameBoard[2, height - 3, 2] = new Block(new Vector3(2, height - 3,2), red, false, floor);
+                gameBoard[2, height - 3, 1] = new Block(new Vector3(2, height - 3,1), red, false, floor);
                 break;
             case 2:
                 //cyan
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), cyan, false, floor);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), cyan, true, floor);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), cyan, false, floor);
-                gameBoard[2, height - 1, 0] = new Block(new Vector3(2, height - 1,0), cyan, false, floor);
+                gameBoard[2, height - 3, 3] = new Block(new Vector3(2, height - 3,3), cyan, false, floor);
+                gameBoard[2, height - 3, 2] = new Block(new Vector3(2, height - 3,2), cyan, true, floor);
+                gameBoard[2, height - 3, 1] = new Block(new Vector3(2, height - 3,1), cyan, false, floor);
+                gameBoard[2, height - 3, 0] = new Block(new Vector3(2, height - 3,0), cyan, false, floor);
                 //print(2);
                 break;
             case 3:
                 //orange
-                gameBoard[1, height - 1, 1] = new Block(new Vector3(1, height - 1,1), orange, false, floor);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), orange, false, floor);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), orange, true, floor);
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), orange, false, floor);
+                gameBoard[1, height - 3, 1] = new Block(new Vector3(1, height - 3,1), orange, false, floor);
+                gameBoard[2, height - 3, 1] = new Block(new Vector3(2, height - 3,1), orange, false, floor);
+                gameBoard[2, height - 3, 2] = new Block(new Vector3(2, height - 3,2), orange, true, floor);
+                gameBoard[2, height - 3, 3] = new Block(new Vector3(2, height - 3,3), orange, false, floor);
                 //print(3);
                 break;
             case 4:
                 //purple
-                gameBoard[1, height - 1,2] = new Block(new Vector3(1, height - 1,2), purple, false, floor);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), purple, false, floor);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), purple, true, floor);
-                gameBoard[2, height - 1, 3] = new Block(new Vector3(2, height - 1,3), purple, false, floor);
+                gameBoard[1, height - 3,2] = new Block(new Vector3(1, height - 3,2), purple, false, floor);
+                gameBoard[2, height - 3, 1] = new Block(new Vector3(2, height - 3,1), purple, false, floor);
+                gameBoard[2, height - 3, 2] = new Block(new Vector3(2, height - 3,2), purple, true, floor);
+                gameBoard[2, height - 3, 3] = new Block(new Vector3(2, height - 3,3), purple, false, floor);
                 //print(4);
                 break;
             case 5:
                 //yellow
-                gameBoard[3, height - 1, 1] = new Block(new Vector3(3, height - 1,1), yellow, false, floor);
-                gameBoard[2, height - 1, 1] = new Block(new Vector3(2, height - 1,1), yellow, false, floor);
-                gameBoard[2, height - 1, 2] = new Block(new Vector3(2, height - 1,2), yellow, true, floor);
-                gameBoard[3, height - 1, 2] = new Block(new Vector3(3, height - 1,2), yellow, false, floor);
+                gameBoard[3, height - 3, 1] = new Block(new Vector3(3, height - 3,1), yellow, false, floor);
+                gameBoard[2, height - 3, 1] = new Block(new Vector3(2, height - 3,1), yellow, false, floor);
+                gameBoard[2, height - 3, 2] = new Block(new Vector3(2, height - 3,2), yellow, true, floor);
+                gameBoard[3, height - 3, 2] = new Block(new Vector3(3, height - 3,2), yellow, false, floor);
                 break;
 
         }   
