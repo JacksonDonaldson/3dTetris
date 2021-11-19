@@ -334,7 +334,6 @@ public class player : MonoBehaviour
                     newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py-difs[i].y, pz + difs[i].x);
                 }
             }
-            return attemptAssignment(blocks, newPositions);
         }
 
         if (axis == "y")
@@ -357,7 +356,7 @@ public class player : MonoBehaviour
                     newPositions[i] = new Vector3(px - difs[i].y, blocks[i].block.transform.position.y, pz + difs[i].x);
                 }
             }
-            return attemptAssignment(blocks, newPositions);
+            //return attemptAssignment(blocks, newPositions);
         }
 
         if (axis == "z")
@@ -380,10 +379,37 @@ public class player : MonoBehaviour
                     newPositions[i] = new Vector3(px - difs[i].y, py + difs[i].x, blocks[i].block.transform.position.z);
                 }
             }
-            return attemptAssignment(blocks, newPositions);
+            //return attemptAssignment(blocks, newPositions);
         }
+        if (attemptAssignment(blocks, newPositions))
+        {
+            print("assignment succeeded");
+            return true;
+        }
+        print("assignment failed");
+        //if the original assignment failed, we can try having everything move to the side in every direction
+        Vector3[] displacements = { Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
+        foreach (Vector3 dif in displacements)
+        {
+            for(int i = 0; i < 4; i++)
+            {
+                newPositions[i] += dif;
+            }
+            
+            if (attemptAssignment(blocks, newPositions))
+            {
+                return true;
+            }
 
+            for(int i =0; i < 4; i++)
+            {
+                newPositions[i] -= dif;
+            }
+
+        }
         return false;
+
+
 
     }
 
