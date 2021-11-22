@@ -11,6 +11,7 @@ public class player : MonoBehaviour
     private double lastGameTick;
     public static int height = 11;
     public Transform floor;
+    public int score = 0;
 
     public Block[,,] gameBoard = new Block[5,height,5];
 
@@ -206,8 +207,10 @@ public class player : MonoBehaviour
                     for(int z = 0; z<5; z++)
                     {
                         Destroy(gameBoard[x, y, z].block);
+                        score += 4;
                     }
                 }
+                
                 
                 //move it all down
                 for (int ny = y; ny < height - 1; ny++)
