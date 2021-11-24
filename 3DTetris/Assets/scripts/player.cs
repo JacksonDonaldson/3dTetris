@@ -565,9 +565,11 @@ public class player : MonoBehaviour
     }
     public Material green, red, cyan, orange, purple, yellow;
 
+    public int nextTet;
     void createNewPiece()
     {
-        int tet = Random.Range(0, 6);
+        int tet = nextTet;
+        nextTet = Random.Range(0, 6);
 
         switch(tet){
             case 0:
