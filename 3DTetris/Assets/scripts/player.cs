@@ -13,9 +13,22 @@ public class player : MonoBehaviour
     public Transform floor;
     public int score = 0;
 
+    public int levelupScore = 500;
+
+    public MeshRenderer nWall;
+    public MeshRenderer bWall;
+    public MeshRenderer sWall;
+    public MeshRenderer eWall;
+    public MeshRenderer wWall;
+
     public Block[,,] gameBoard = new Block[5,height,5];
 
     private Block[] final;
+
+    private bool pause;
+
+    private double gameTickDiv = 1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +40,11 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Time.time - lastGameTick > gameTick)
+        if (pause)
+        {
+            return;
+        }
+        if(Time.time - lastGameTick > gameTickDiv * gameTick)
         {
             lastGameTick = Time.time;
             advanceGame();
@@ -164,17 +181,101 @@ public class player : MonoBehaviour
             checkForFullMatrix();
         }
 
+        
         if (Input.GetButton("SoftDrop"))
         {
-            gameTick = .5;
+            gameTickDiv = .33;
         }
         else
         {
-            gameTick = 2;
+            gameTickDiv = 1;
         }
     }
 
+    bool checkForLevelUp()
+    {
 
+        if ((score + 100) % levelupScore != 0){
+            return false;
+        }
+        gameTick *= .85;
+
+        Color c;
+        if(score == 400)
+        {
+            c = new Color(201f / 255, 240f / 255, 1);
+        }
+        else if(score == 900)
+        {
+            c = new Color(201f / 255, 1, 230f / 255);
+        }
+        else if(score == 1400)
+        {
+            c = new Color(245f / 255, 1, 155f / 255);
+        }
+        else
+        {
+            c = new Color(1, 138f / 255, 115f / 255);
+        }
+
+        bWall.materials[0].color = c;
+        nWall.materials[0].color = c;
+        eWall.materials[0].color = c;
+        wWall.materials[0].color = c;
+        sWall.materials[0].color = c;
+
+        return true;
+    }
+
+    IEnumerator playLevelUp(int y)
+    {
+        pause = true;
+
+        for (int x = 0; x < 5; x++)
+        {
+
+            for (int z = 0; z < 5; z++)
+            {
+                Destroy(gameBoard[x, y, z].block);
+                score += 4;
+            }
+            soundEffect.Play();
+
+            while (soundEffect.isPlaying)
+            {
+                yield return null;
+            }
+        }
+
+        for (int ny = y; ny < height - 1; ny++)
+        {
+            for (int x = 0; x < 5; x++)
+            {
+                for (int z = 0; z < 5; z++)
+                {
+
+                    gameBoard[x, ny, z] = gameBoard[x, ny + 1, z];
+                    gameBoard[x, ny + 1, z] = null;
+
+                    if (!(gameBoard[x, ny, z] is null))
+                    {
+                        //print("found 1");
+                        //print(gameBoard[x, ny, z].isActive);
+                        gameBoard[x, ny, z].block.transform.position = new Vector3(x, ny, z);
+
+                    }
+
+
+
+                }
+            }
+        }
+
+        pause = false;
+
+    }
+    public AudioSource soundEffect;
+    private double story;
     void checkForFullMatrix()
     {
         for (int y = 0; y < height; y++)
@@ -201,64 +302,67 @@ public class player : MonoBehaviour
             if (good)
             {
                 // a matrix is full
-                //destroy it
-                for(int x = 0; x < 5; x++)
+
+                if (checkForLevelUp())
                 {
-                    for(int z = 0; z<5; z++)
-                    {
-                        Destroy(gameBoard[x, y, z].block);
-                        score += 4;
-                    }
+                    story = y;
+                    StartCoroutine("playLevelUp", y);
                 }
-                
-                
-                //move it all down
-                for (int ny = y; ny < height - 1; ny++)
+                else
                 {
                     for (int x = 0; x < 5; x++)
                     {
+
                         for (int z = 0; z < 5; z++)
                         {
-                            
-                            gameBoard[x, ny, z] = gameBoard[x, ny + 1, z];
-                            gameBoard[x, ny + 1, z] = null;
-
-                            if (!(gameBoard[x, ny, z] is null))
-                            {
-                                //print("found 1");
-                                print(gameBoard[x, ny, z].isActive);
-                                gameBoard[x, ny, z].block.transform.position = new Vector3(x, ny, z);
-                                
-                            }
-
-                            
-
+                            Destroy(gameBoard[x, y, z].block);
+                            score += 4;
                         }
-                    }
-                }
-                y--;
+                        soundEffect.Play();
+                        double i = 0;
+                        while (i < 999999)
+                        {
+                            i++;
+                        }
 
-                for(int ny = 0; ny < height; ny++)
-                {
-                    for(int x = 0; x < 5; x++)
+
+                    }
+
+                    //move it all down
+                    for (int ny = y; ny < height - 1; ny++)
                     {
-                        for (int z = 0; z < 5; z++)
+                        for (int x = 0; x < 5; x++)
                         {
-                            if(!(gameBoard[x,ny,z] is null))
+                            for (int z = 0; z < 5; z++)
                             {
-                                print(x);
-                                print(ny);
-                                print(z);
+
+                                gameBoard[x, ny, z] = gameBoard[x, ny + 1, z];
+                                gameBoard[x, ny + 1, z] = null;
+
+                                if (!(gameBoard[x, ny, z] is null))
+                                {
+                                    //print("found 1");
+                                    //print(gameBoard[x, ny, z].isActive);
+                                    gameBoard[x, ny, z].block.transform.position = new Vector3(x, ny, z);
+
+                                }
+
+
+
                             }
                         }
-                        //print("");
                     }
-                    //print("");
-                    //print("");
-                    //print("");
+                    y--;
+
                 }
 
             }
+
+                //destroy it
+                
+                
+                
+               
 
         }
     }
@@ -386,10 +490,10 @@ public class player : MonoBehaviour
         }
         if (attemptAssignment(blocks, newPositions))
         {
-            print("assignment succeeded");
+            //print("assignment succeeded");
             return true;
         }
-        print("assignment failed");
+        //print("assignment failed");
         //if the original assignment failed, we can try having everything move to the side in every direction
         Vector3[] displacements = { Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
         foreach (Vector3 dif in displacements)
