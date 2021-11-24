@@ -21,7 +21,7 @@ public class player : MonoBehaviour
     public MeshRenderer eWall;
     public MeshRenderer wWall;
 
-    public Block[,,] gameBoard = new Block[5,height,5];
+    public Block[,,] gameBoard = new Block[5, height, 5];
 
     private Block[] final;
 
@@ -34,7 +34,7 @@ public class player : MonoBehaviour
     {
         lastGameTick = Time.time;
         createNewPiece();
-
+        nextTet = Random.Range(0, 6);
     }
 
     // Update is called once per frame
@@ -44,7 +44,7 @@ public class player : MonoBehaviour
         {
             return;
         }
-        if(Time.time - lastGameTick > gameTickDiv * gameTick)
+        if (Time.time - lastGameTick > gameTickDiv * gameTick)
         {
             lastGameTick = Time.time;
             advanceGame();
@@ -58,11 +58,11 @@ public class player : MonoBehaviour
 
         doSpecialCommands();
 
-        
+
     }
     void advanceGame()
     {
-        if(!tryMoveActive(new Vector3(0, -1, 0)))
+        if (!tryMoveActive(new Vector3(0, -1, 0)))
         {
             //print("found a collision");
             setAllInactive();
@@ -122,16 +122,24 @@ public class player : MonoBehaviour
         }
     }
 
+    public GameObject gameOverPanel;
+    void gameOver()
+    {
+        pause = true;
+
+        gameOverPanel.SetActive(true);
+    }
+
 
     void showFinalLocation()
     {
         Block[] blocks = findActiveBlocks();
-        
+
 
         //print("done");
-        if(!(final is null))
+        if (!(final is null))
         {
-            foreach(Block b in final)
+            foreach (Block b in final)
             {
                 Destroy(b.block);
             }
@@ -139,7 +147,7 @@ public class player : MonoBehaviour
         final = new Block[4];
         Color c = blocks[0].block.GetComponent<MeshRenderer>().material.color;
 
-        for (int i =0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             final[i] = blocks[i].copy();
 
@@ -150,17 +158,17 @@ public class player : MonoBehaviour
 
 
         //extra loop here so null writes always get overridden by future to prevent bug
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector3 endLocation = blocks[i].block.transform.position;
             gameBoard[(int)endLocation.x, (int)endLocation.y, (int)endLocation.z] = null;
         }
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector3 endLocation = blocks[i].block.transform.position;
             Vector3 fPos = final[i].block.transform.position;
             blocks[i].block.transform.position = fPos;
-            
+
 
             gameBoard[(int)fPos.x, (int)fPos.y, (int)fPos.z] = blocks[i];
 
@@ -171,7 +179,7 @@ public class player : MonoBehaviour
 
     void doSpecialCommands()
     {
-        if(Input.GetButtonDown("HardDrop"))
+        if (Input.GetButtonDown("HardDrop"))
         {
             //print("down");
             while (tryMoveActive(Vector3.down)) { }
@@ -181,7 +189,7 @@ public class player : MonoBehaviour
             checkForFullMatrix();
         }
 
-        
+
         if (Input.GetButton("SoftDrop"))
         {
             gameTickDiv = .33;
@@ -195,21 +203,21 @@ public class player : MonoBehaviour
     bool checkForLevelUp()
     {
 
-        if ((score + 100) % levelupScore != 0){
+        if ((score + 100) % levelupScore != 0) {
             return false;
         }
         gameTick *= .85;
 
         Color c;
-        if(score == 400)
+        if (score == 400)
         {
             c = new Color(201f / 255, 240f / 255, 1);
         }
-        else if(score == 900)
+        else if (score == 900)
         {
             c = new Color(201f / 255, 1, 230f / 255);
         }
-        else if(score == 1400)
+        else if (score == 1400)
         {
             c = new Color(245f / 255, 1, 155f / 255);
         }
@@ -282,11 +290,11 @@ public class player : MonoBehaviour
         {
             bool good = true;
 
-            for(int x = 0; x < 5; x++)
+            for (int x = 0; x < 5; x++)
             {
-                for(int z = 0; z < 5; z++)
+                for (int z = 0; z < 5; z++)
                 {
-                    if(gameBoard[x,y,z] is null)
+                    if (gameBoard[x, y, z] is null)
                     {
 
                         good = false;
@@ -317,12 +325,6 @@ public class player : MonoBehaviour
                         {
                             Destroy(gameBoard[x, y, z].block);
                             score += 4;
-                        }
-                        soundEffect.Play();
-                        double i = 0;
-                        while (i < 999999)
-                        {
-                            i++;
                         }
 
 
@@ -358,11 +360,11 @@ public class player : MonoBehaviour
 
             }
 
-                //destroy it
-                
-                
-                
-               
+            //destroy it
+
+
+
+
 
         }
     }
@@ -374,7 +376,7 @@ public class player : MonoBehaviour
             {
                 for (int z = 0; z < 5; z++)
                 {
-                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isPivot && gameBoard[x, y, z].isActive)
+                    if (!(gameBoard[x, y, z] is null) && gameBoard[x, y, z].isPivot && gameBoard[x, y, z].isActive)
                     {
                         return gameBoard[x, y, z];
                     }
@@ -394,7 +396,7 @@ public class player : MonoBehaviour
             {
                 for (int z = 0; z < 5; z++)
                 {
-                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
+                    if (!(gameBoard[x, y, z] is null) && gameBoard[x, y, z].isActive)
                     {
                         blocks[i] = gameBoard[x, y, z];
                         i++;
@@ -406,7 +408,7 @@ public class player : MonoBehaviour
     }
 
 
-            
+
     bool tryRotate(String axis, bool clockwise)
     {
         Block pivot = findPivot();
@@ -419,26 +421,26 @@ public class player : MonoBehaviour
         float px = pivot.block.transform.position.x;
         float py = pivot.block.transform.position.y;
         float pz = pivot.block.transform.position.z;
-        if(axis == "x")
+        if (axis == "x")
         {
-            for(int i = 0; i < blocks.Length; i++)
+            for (int i = 0; i < blocks.Length; i++)
             {
                 difs[i] = new Vector2(blocks[i].block.transform.position.y - py, blocks[i].block.transform.position.z - pz);
                 //print(difs[i]);
             }
-            
+
             if (clockwise)
             {
-                for(int i =0; i < blocks.Length; i++)
+                for (int i = 0; i < blocks.Length; i++)
                 {
-                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py + difs[i].y, pz-difs[i].x);
+                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py + difs[i].y, pz - difs[i].x);
                 }
             }
             else
             {
                 for (int i = 0; i < blocks.Length; i++)
                 {
-                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py-difs[i].y, pz + difs[i].x);
+                    newPositions[i] = new Vector3(blocks[i].block.transform.position.x, py - difs[i].y, pz + difs[i].x);
                 }
             }
         }
@@ -476,7 +478,7 @@ public class player : MonoBehaviour
             {
                 for (int i = 0; i < blocks.Length; i++)
                 {
-                    newPositions[i] = new Vector3(px + difs[i].y, py -difs[i].x, blocks[i].block.transform.position.z);
+                    newPositions[i] = new Vector3(px + difs[i].y, py - difs[i].x, blocks[i].block.transform.position.z);
                 }
             }
             else
@@ -498,17 +500,17 @@ public class player : MonoBehaviour
         Vector3[] displacements = { Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
         foreach (Vector3 dif in displacements)
         {
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 newPositions[i] += dif;
             }
-            
+
             if (attemptAssignment(blocks, newPositions))
             {
                 return true;
             }
 
-            for(int i =0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 newPositions[i] -= dif;
             }
@@ -527,11 +529,11 @@ public class player : MonoBehaviour
         for (int i = 0; i < blocks.Length; i++)
         {
             Vector3 pos = newPositions[i];
-            if(pos.x < 0 || pos.x >=5 || pos.y >= height || pos.y <0 || pos.z >= 5 || pos.z < 0)
+            if (pos.x < 0 || pos.x >= 5 || pos.y >= height || pos.y < 0 || pos.z >= 5 || pos.z < 0)
             {
                 return false;
             }
-            if(!(gameBoard[(int)pos.x,(int)pos.y,(int)pos.z] is null) && !gameBoard[(int)pos.x, (int)pos.y, (int)pos.z].isActive)
+            if (!(gameBoard[(int)pos.x, (int)pos.y, (int)pos.z] is null) && !gameBoard[(int)pos.x, (int)pos.y, (int)pos.z].isActive)
             {
                 return false;
             }
@@ -539,13 +541,13 @@ public class player : MonoBehaviour
 
         //we won't, so continue with assignment
         //starting by removing all old blocks
-        for(int x=0; x < 5; x++)
+        for (int x = 0; x < 5; x++)
         {
-            for(int y = 0; y < height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for(int z = 0; z < 5; z++)
+                for (int z = 0; z < 5; z++)
                 {
-                    if (!(gameBoard[x,y,z] is null) && gameBoard[x, y, z].isActive)
+                    if (!(gameBoard[x, y, z] is null) && gameBoard[x, y, z].isActive)
                     {
                         gameBoard[x, y, z] = null;
                     }
@@ -554,7 +556,7 @@ public class player : MonoBehaviour
         }
 
         //continuing by assigning newPosition to each block
-        for(int i = 0; i < blocks.Length; i++)
+        for (int i = 0; i < blocks.Length; i++)
         {
             Vector3 pos = newPositions[i];
             gameBoard[(int)pos.x, (int)pos.y, (int)pos.z] = blocks[i];
@@ -570,6 +572,17 @@ public class player : MonoBehaviour
     {
         int tet = nextTet;
         nextTet = Random.Range(0, 6);
+
+        int[,] place = new int [12,3]{ { 2, height - 4, 2 }, { 3, height - 4, 2 }, { 3, height - 4, 3 }, { 3, height - 3, 2 }, { 3, height - 3, 3 },{ 2, height - 3, 2 },{ 2, height - 3, 1 },{ 2, height - 3, 2 },{ 2, height - 3, 0 },{ 1, height - 1, 1 },{ 1, height - 3, 2 },{ 3, height - 3, 1 }};
+
+        for(int i = 0; i < 12; i++)
+        {
+            if(gameBoard[place[i,0],place[i,1],place[i,2]] != null)
+            {
+                gameOver();
+                return;
+            }
+        }
 
         switch(tet){
             case 0:
