@@ -135,7 +135,11 @@ public class player : MonoBehaviour
     {
         Block[] blocks = findActiveBlocks();
 
-
+        if(blocks[0] == null)
+        {
+            print("escaping");
+            return;
+        }
         //print("done");
         if (!(final is null))
         {
