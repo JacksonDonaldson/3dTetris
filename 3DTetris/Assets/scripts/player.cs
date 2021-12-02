@@ -29,12 +29,19 @@ public class player : MonoBehaviour
 
     private double gameTickDiv = 1;
 
+    public int nextTet;
     // Start is called before the first frame update
+
+    void Awake()
+    {
+        nextTet = Random.Range(0, 6);
+        print(nextTet);
+    }
     void Start()
     {
         lastGameTick = Time.time;
         createNewPiece();
-        nextTet = Random.Range(0, 6);
+        
     }
 
     // Update is called once per frame
@@ -571,9 +578,10 @@ public class player : MonoBehaviour
     }
     public Material green, red, cyan, orange, purple, yellow;
 
-    public int nextTet;
+    
     void createNewPiece()
     {
+
         int tet = nextTet;
         nextTet = Random.Range(0, 6);
 
