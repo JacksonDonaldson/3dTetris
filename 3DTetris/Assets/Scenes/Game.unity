@@ -862,7 +862,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7bea68fffdb02b74c87edc3936f60230, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 60cfe2a15790a444daf77192cca160ee, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2711,6 +2711,7 @@ MonoBehaviour:
   sWall: {fileID: 1963913743}
   eWall: {fileID: 106814802}
   wWall: {fileID: 1949841418}
+  nextTet: 0
   gameOverPanel: {fileID: 1536376442}
   soundEffect: {fileID: 732134765}
   green: {fileID: 2100000, guid: eec9d7a9d63ac2d4d9037440e6dc927b, type: 2}
@@ -2719,7 +2720,6 @@ MonoBehaviour:
   orange: {fileID: 2100000, guid: 3b4c35cb15d945843bd9608e4c1c3afb, type: 2}
   purple: {fileID: 2100000, guid: 05f61e0bb24d1ba46aa24b5d16387fa1, type: 2}
   yellow: {fileID: 2100000, guid: ccdbfcf056ecfb042a79ea69b2f88606, type: 2}
-  nextTet: 0
 --- !u!4 &1066375699
 Transform:
   m_ObjectHideFlags: 0
